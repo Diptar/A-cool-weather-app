@@ -1,0 +1,59 @@
+from tkinter import *
+import requests
+from tkinter import messagebox
+
+#5606f64654f851031ad91d38736c642b
+#url = 'api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}'
+
+
+def get_data(city):
+    # Sending a get request to the api url
+    response = requests.get(f'http://api.openweathermap.org/data/2.5/weather?appid=5606f64654f851031ad91d38736c642b&q={city}&units=Metric')
+    return response.json()
+    
+    
+def search():
+    city = city_name.get()
+    if city == '':
+        messagebox.showerror('Name Error','Please select a city name')
+    else:
+
+        data = get_data(city)
+        try:
+            loc['text'] = data['name']
+            temp['text'] = str(data['main']['temp']) + ' Celcius'
+            weather['text'] = data['weather'][0]['description']
+            
+        except:
+            messagebox.showerror('Name Error','City not found')
+            
+
+root = Tk()
+root.title('My Weather App')
+root.maxsize(500,400)
+root.minsize(500,400)
+root.configure(bg = '#B8FFD9')
+Label(root,text = 'WELCOME TO WEATHER APP',font = 'helvetica 20 bold',pady = 10,
+bg = '#12D3AB',fg = 'brown').pack(fill = X)
+
+frame = Frame(root)
+frame.configure(bg = '#B8FFD9')
+city_name = StringVar()
+text = Label(frame,text = 'Enter City Name: ',font = 'lucida 13 bold',bg = '#B8FFD9')
+text.pack(side = LEFT,padx = 6)
+
+e = Entry(frame,textvariable = city_name,font = 'lucida 20 bold',fg = '#3980FF')
+e.pack(side = LEFT)
+frame.pack()
+Button(root,text = 'SELECT WEATHER',font = 'lucida 15 italic',bg = 'pink',
+fg = 'brown',command = search).pack(pady = 5)
+# Location 
+loc = Label(root,text = 'Location',font = 'helvetica 15 bold',bg = '#B8FFD9')
+loc.pack(pady = 30)
+# Temperature
+temp = Label(root,text = 'Temperature',font = 'lucida 10 bold',bg = '#B8FFD9')
+temp.pack(pady = 10)
+# Weather
+weather = Label(root,text = 'Weather',font = 'lucida 10 bold',bg = '#B8FFD9')
+weather.pack(pady = 50)
+root.mainloop()
